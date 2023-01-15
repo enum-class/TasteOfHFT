@@ -1,6 +1,6 @@
 #include "Lib.h"
 #include <string>
 
-std::string welcome(const std::string &user) const noexcept {
-    return WELCOME_MESSAGE + "\t" + user;
+std::string Lib::welcome(const std::string &user) const noexcept {
+    return std::string(WELCOME_MESSAGE) + " " + user;
 }
