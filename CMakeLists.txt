@@ -5,8 +5,6 @@ project (HFT CXX)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
-set(CMAKE_CXX_STANDARD 20)
-
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/conan.cmake)
 conan_cmake_configure(REQUIRES gtest/cci.20210126
                       GENERATORS cmake_find_package)
