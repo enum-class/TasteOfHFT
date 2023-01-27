@@ -15,6 +15,8 @@ conan_cmake_install(PATH_OR_REFERENCE .
                     REMOTE conancenter
                     SETTINGS ${settings})
 
+add_subdirectory(libs)
+
 add_library(hftlib
     src/Lib.cpp
 )
