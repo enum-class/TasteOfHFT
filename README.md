@@ -49,9 +49,13 @@ Here's why:
 
 ## Build
 ### Linux
+```
 cmake --preset={unix-release/unix-dev}
 cmake --build {Release/Debug}
+```
 ### Windows
+```
 cmake --preset={windows-release-x64/windows-dev-x64}
 cd {Release/Debug}
 msbuild.exe HFT.sln /p:Configuration={Release/Debug} /p:Platform=x64
+```
