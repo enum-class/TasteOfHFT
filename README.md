@@ -2,7 +2,7 @@
 # Taste of HFT
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-![HFT](asset/images/log.png)
+![HFT](assets/images/logo.png)
 
 ## Table of Contents <a name="content-list"></a>
 - [About The Project](#about)
@@ -50,7 +50,7 @@ We also have cryptocurrencies being traded using HFT strategies, even if the def
 <p align="right">(<a href="#content-list">back to top</a>)</p>
 
 ## Architecture <a name="arch"></a>
-![architecture](asset/images/arch.jpg)
+![architecture](assets/images/arch.jpg)
 
 <p align="right">(<a href="#content-list">back to top</a>)</p>
 
