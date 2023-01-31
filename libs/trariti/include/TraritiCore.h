@@ -28,14 +28,14 @@ struct HeadTail {
   std::atomic<uint32_t> tail = 0;
 };
 
-    struct Trariti
-    {
-        const uint8_t *memzone = nullptr;
-        uint32_t size = 0;
-        uint32_t mask = 0;
-        uint32_t capacity = 0;
+struct Trariti {
+    const uint8_t *memzone = nullptr;
+    uint32_t size = 0;
+    uint32_t mask = 0;
+    uint32_t capacity = 0;
 
-        HeadTail producer;
-        HeadTail consumer;
-    };
+    HeadTail producer;
+    HeadTail consumer;
+};
+
 }

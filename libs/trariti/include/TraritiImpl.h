@@ -131,9 +131,9 @@ namespace
     template <trariti::SyncType sync>
     void update_tail(trariti::HeadTail* ht, uint32_t old_val, uint32_t new_val) {
         if constexpr (sync == trariti::SyncType::MULTI_THREAD) {
-            while (ht->tail.load(std::memory_order_relaxed) != old_val) {
-                //_mm_pause();
-            }
+          while (ht->tail.load(std::memory_order_relaxed) != old_val) {
+            //_mm_pause();
+          }
         }
 
         ht->tail.store(new_val, std::memory_order_release);
