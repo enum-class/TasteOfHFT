@@ -2,41 +2,16 @@ cmake_minimum_required(VERSION 3.5)
 
 project (Trariti CXX)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
-list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
+add_library(TraritiLib INTERFACE)
+target_include_directories(TraritiLib INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
 
-set(CMAKE_CXX_STANDARD 20)
+find_package(Threads REQUIRED)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/conan.cmake)
-conan_cmake_configure(REQUIRES gtest/cci.20210126
-                      GENERATORS cmake_find_package)
+add_executable(TraritiQueueTest ${CMAKE_CURRENT_SOURCE_DIR}/tests/TraritiQueueTest.cpp)
 
-conan_cmake_autodetect(settings)
-conan_cmake_install(PATH_OR_REFERENCE .
-                    BUILD missing
-                    REMOTE conancenter
-                    SETTINGS ${settings})
-
-add_library(traritilib
-    #src/TraritiImpl.cpp
-    src/Trariti.cpp
-)
-
-target_include_directories(traritilib
-    PUBLIC
-    include
-)
+target_link_libraries(TraritiQueueTest TraritiLib Threads::Threads)
 
 enable_testing()
-
-find_package(GTest)
-
-add_executable(${PROJECT_NAME} tests/LibTest.cpp)
-
-target_link_libraries(${PROJECT_NAME}
-    traritilib
-    GTest::gtest
-    GTest::gtest_main
-)
-
-add_test(test_all ${PROJECT_NAME})
+add_test(TraritiQueueTest TraritiQueueTest)

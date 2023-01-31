@@ -2,8 +2,6 @@
 
 #include <TraritiCore.h>
 
-#include <atomic>
-
 namespace
 {
     template <trariti::SyncType sync, trariti::Behavior behavior>
@@ -133,7 +131,7 @@ namespace
     template <trariti::SyncType sync>
     void update_tail(trariti::HeadTail* ht, uint32_t old_val, uint32_t new_val) {
         if constexpr (sync == trariti::SyncType::MULTI_THREAD) {
-            while (ht->tail.load(std::memory_order_relaxed) != old_val
+            while (ht->tail.load(std::memory_order_relaxed) != old_val) {
                 //_mm_pause();
             }
         }
