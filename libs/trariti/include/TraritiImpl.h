@@ -1,6 +1,9 @@
 #pragma once
 
 #include <TraritiCore.h>
+
+#include <atomic>
+
 namespace
 {
     template <trariti::SyncType sync, trariti::Behavior behavior>
@@ -11,19 +14,18 @@ namespace
         int success = 0;
 
         /* move cons.head atomically */
-        *old_head = __atomic_load_n(&tr->consumer.head, __ATOMIC_RELAXED);
+        *old_head = tr->consumer.head.load(std::memory_order_relaxed);
         do {
             /* Restore n as it may change every loop */
             n = max;
 
             /* Ensure the head is read before tail */
-            __atomic_thread_fence(__ATOMIC_ACQUIRE);
+            std::atomic_thread_fence(std::memory_order_acquire);
 
             /* this load-acquire synchronize with store-release of ht->tail
              * in update_tail.
              */
-            prod_tail = __atomic_load_n(&tr->producer.tail,
-                    __ATOMIC_ACQUIRE);
+            prod_tail = tr->producer.tail.load(std::memory_order_acquire);
 
             /* The subtraction is done between two unsigned 32bits value
              * (the result is always modulo 32 bits even if we have
@@ -50,10 +52,9 @@ namespace
             }
             else {
                 /* on failure, *old_head will be updated */
-                success = __atomic_compare_exchange_n(&tr->consumer.head,
-                        old_head, *new_head,
-                        0, __ATOMIC_RELAXED,
-                        __ATOMIC_RELAXED);
+                success = atomic_compare_exchange_strong_explicit(
+                    &tr->consumer.head, old_head, *new_head,
+                    std::memory_order_relaxed, std::memory_order_relaxed);
             }
         } while (success == 0); // [[unlikely]]
         return n;
@@ -98,12 +99,11 @@ namespace
         unsigned int max = n;
         int success = 0;
 
-        *old_head = __atomic_load_n(&tr->producer.head, __ATOMIC_RELAXED);
+        *old_head = tr->producer.head.load(std::memory_order_relaxed);
         do {
             n = max;
-            __atomic_thread_fence(__ATOMIC_ACQUIRE);
-
-            cons_tail = __atomic_load_n(&tr->consumer.tail, __ATOMIC_ACQUIRE);
+            std::atomic_thread_fence(std::memory_order_acquire);
+            cons_tail = tr->consumer.tail.load(std::memory_order_acquire);
 
             *free_entries = (capacity + cons_tail - *old_head);
 
@@ -122,8 +122,9 @@ namespace
                 tr->producer.head = *new_head;
                 return n;
             } else {
-                success = __atomic_compare_exchange_n(&tr->producer.head,
-                        old_head, *new_head, 0, __ATOMIC_RELAXED, __ATOMIC_RELAXED);
+              success = atomic_compare_exchange_strong_explicit(
+                  &tr->producer.head, old_head, *new_head,
+                  std::memory_order_relaxed, std::memory_order_relaxed);
             }
         } while (success == 0); // [[unlikely]]
         return n;
@@ -132,12 +133,12 @@ namespace
     template <trariti::SyncType sync>
     void update_tail(trariti::HeadTail* ht, uint32_t old_val, uint32_t new_val) {
         if constexpr (sync == trariti::SyncType::MULTI_THREAD) {
-            while (__atomic_load_n(&ht->tail, __ATOMIC_RELAXED) != old_val) {
+            while (ht->tail.load(std::memory_order_relaxed) != old_val
                 //_mm_pause();
             }
         }
 
-        __atomic_store_n(&ht->tail, new_val, __ATOMIC_RELEASE);
+        ht->tail.store(new_val, std::memory_order_release);
     }
 
     void enqueue_memory(trariti::Trariti *tr, uint32_t prod_head, const void *obj_table, uint32_t n) {

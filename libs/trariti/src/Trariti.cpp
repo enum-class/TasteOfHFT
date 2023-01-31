@@ -38,24 +38,22 @@ namespace {
 }
 
 trariti::Trariti *trariti::create(std::size_t size) {
-    trariti::Trariti *tr = nullptr;
-    int mz_flags;
-    const unsigned int req_count = size;
+  trariti::Trariti *tr = nullptr;
+  const unsigned int req_count = size;
 
-    size = align32pow2(size + 1);
-    std::size_t real_size = calculate_memsize_element(sizeof(uint8_t), size);
-    if (size == 0)
-        return nullptr;
+  size = align32pow2(size + 1);
+  std::size_t real_size = calculate_memsize_element(sizeof(uint8_t), size);
+  if (size == 0) return nullptr;
 
-    uint8_t *mz = new uint8_t[real_size];
-    tr = reinterpret_cast<trariti::Trariti *>(mz);
-    std::memset(tr, 0, sizeof(*tr));
-    tr->size = size; 
-    tr->mask = tr->size - 1;
-    tr->capacity = req_count;
-    tr->memzone = mz;
+  uint8_t *mz = new uint8_t[real_size];
+  tr = reinterpret_cast<trariti::Trariti *>(mz);
+  std::memset(tr, 0, sizeof(*tr));
+  tr->size = size;
+  tr->mask = tr->size - 1;
+  tr->capacity = req_count;
+  tr->memzone = mz;
 
-    return tr;
+  return tr;
 }
 
 void trariti::free(trariti::Trariti* tr) {
